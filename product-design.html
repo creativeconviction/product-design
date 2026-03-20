@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creative Conviction, Part I — Product Design</title>
+
+  <!-- Sometype Mono — Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sometype+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- marked.js — markdown parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0A0A0A;
+      --cream:   #F4F1EB;
+      --text:    #1C1C1C;
+      --muted:   #888880;
+      --rule:    rgba(28, 28, 28, 0.12);
+      --font:    'Sometype Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; font-size: 13px; }
+
+    body {
+      font-family: var(--font);
+      background-color: #F0EEE8;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.68' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.3'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+/* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .hero {
+      min-height: 100vh;
+      background: var(--black);
+      color: var(--cream);
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      padding: 56px 48px;
+      position: relative;
+      overflow: hidden;
+      gap: 48px;
+    }
+
+    .hero-image-right {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 33%;
+      align-self: stretch;
+      margin-top: -56px;
+      margin-right: -48px;
+      margin-bottom: -56px;
+      overflow: hidden;
+    }
+
+    .hero-image-right img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* SWAP: hero image — replace the src attribute below with your image URL */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.32;
+      filter: grayscale(15%);
+      display: block;
+    }
+    /* SWAP END */
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0.1)  0%,
+        rgba(10,10,10,0.45) 45%,
+        rgba(10,10,10,0.88) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+    }
+
+    .hero-eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(244,241,235,0.55);
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(3.4rem, 7.5vw, 6.8rem);
+      font-weight: 700;
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+      margin-bottom: 36px;
+      margin-left: 0;
+      padding: 0;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 36px 48px;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(244,241,235,0.45);
+      border-top: 1px solid rgba(244,241,235,0.12);
+      padding-top: 24px;
+    }
+
+    .hero-meta-item strong {
+      display: block;
+      color: rgba(244,241,235,0.85);
+      margin-bottom: 3px;
+      font-weight: 500;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 30px;
+      right: 48px;
+      z-index: 1;
+      font-size: 7px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(244,241,235,0.3);
+      animation: float 2.4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0);   opacity: 0.3; }
+      50%       { transform: translateY(7px); opacity: 0.6; }
+    }
+
+    /* ══════════════════════════════════════
+       ARTICLE
+    ══════════════════════════════════════ */
+    .article {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 88px 32px 120px;
+    }
+
+    /* ── Scroll reveal base state ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition:
+        opacity  0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Typography ── */
+    .article h2 {
+      font-size: clamp(1.45rem, 2.8vw, 1.9rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-top: 64px;
+      margin-bottom: 20px;
+      padding-top: 52px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .article h2.first-heading {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
+    .article h3 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 44px;
+      margin-bottom: 14px;
+    }
+
+    .article p {
+      font-size: 1.05rem;
+      line-height: 1.5;
+      margin-bottom: 22px;
+      color: #252520;
+    }
+
+    .article blockquote {
+      margin: 40px 0;
+      padding: 24px 28px;
+      border-left: 2.5px solid var(--black);
+      background: rgba(10,10,10,0.04);
+    }
+
+    .article blockquote p {
+      font-size: 1.2rem;
+      font-style: italic;
+      font-weight: 500;
+      line-height: 1.5;
+      margin-bottom: 0;
+      color: var(--text);
+    }
+
+    .article ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 28px;
+    }
+
+    .article li {
+      font-size: 1.05rem;
+      line-height: 1.5;
+      padding: 10px 0 10px 22px;
+      border-bottom: 1px solid rgba(28,28,28,0.06);
+      position: relative;
+      color: #252520;
+    }
+
+    .article li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+    }
+
+    .article hr {
+      border: none;
+      height: 1px;
+      background: var(--rule);
+      margin: 56px 0;
+    }
+
+    .article strong { font-weight: 600; color: var(--black); }
+    .article em     { font-style: italic; }
+    .article a      { color: var(--text); }
+    .article li a   { text-decoration: none; }
+
+    /* ── Image placeholders ── */
+    .img-placeholder {
+      width: 100%;
+      background: rgba(10,10,10,0.05);
+      border: 1px dashed rgba(10,10,10,0.14);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 52px 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Empty placeholder keeps a fixed ratio */
+    .img-placeholder:not(:has(> img[src]:not([src=""]))) {
+      aspect-ratio: 16 / 9;
+    }
+
+    .img-placeholder img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .img-placeholder-label {
+      font-size: 7px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .img-placeholder-icon {
+      font-size: 22px;
+      opacity: 0.25;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background: var(--black);
+      color: var(--cream);
+      padding: 68px 48px 60px;
+    }
+
+    .footer-inner {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .footer-eyebrow {
+      font-size: 7px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(244,241,235,0.35);
+      margin-bottom: 28px;
+    }
+
+    .footer-heading {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--cream);
+    }
+
+    .footer-sub {
+      font-size: 0.875rem;
+      color: rgba(244,241,235,0.5);
+      line-height: 1.75;
+      max-width: 460px;
+      margin-bottom: 44px;
+    }
+
+    .footer-authors {
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(244,241,235,0.1);
+      padding-top: 32px;
+      margin-bottom: 44px;
+    }
+
+    .footer-author strong {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--cream);
+    }
+
+    .footer-author a {
+      font-size: 0.775rem;
+      color: rgba(244,241,235,0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-author a:hover { color: var(--cream); }
+
+    .footer-source {
+      font-size: 7px;
+      letter-spacing: 0.1em;
+      color: rgba(244,241,235,0.2);
+      border-top: 1px solid rgba(244,241,235,0.07);
+      padding-top: 24px;
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 600px) {
+      .hero        { padding: 40px 24px; }
+      .scroll-cue  { right: 24px; }
+      .article     { padding: 64px 22px 80px; }
+      footer       { padding: 52px 24px 44px; }
+      .hero-meta   { flex-direction: column; gap: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════ -->
+  <section class="hero">
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow"><a href="https://creativeconviction.github.io/creative-conviction/" style="color:inherit;text-decoration:none;">Creative Conviction in the AI Era &mdash; Part I of III</a></p>
+      <h1 class="hero-title">Product<br>Design</h1>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <strong>Authors</strong>
+          Libbie Frost &amp; Rayouf Alhumedhi
+        </div>
+        <div class="hero-meta-item">
+          <strong>Published</strong>
+          March 20, 2026
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-image-right">
+      <canvas id="hero-water-canvas" style="width:100%;height:100%;display:block;filter:hue-rotate(352deg);background:#909090;"></canvas>
+    </div>
+
+    <p class="scroll-cue">↓ scroll</p>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       ARTICLE — injected by renderArticle()
+  ══════════════════════════════════════════ -->
+  <main class="article" id="article"></main>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="reveal">
+    <div class="footer-inner">
+      <p class="footer-heading">For builders in creative tooling</p>
+      <p class="footer-sub">
+        This is the first in a three-part series examining AI's impact on
+        product design, brand &amp; marketing, and consumer play.
+      </p>
+      <div class="footer-authors">
+        <div class="footer-author">
+          <strong>Libbie Frost</strong>
+          <a href="mailto:lfrost@bvp.com">lfrost@bvp.com</a>
+        </div>
+        <div class="footer-author">
+          <strong>Rayouf Alhumedhi</strong>
+          <a href="mailto:ralhumedhi@bvp.com">ralhumedhi@bvp.com</a>
+        </div>
+      </div>
+      <p class="footer-source">
+        Originally published on BVP Atlas &nbsp;·&nbsp; bvp.com/atlas
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // ────────────────────────────────────────────────────────
+    // ARTICLE CONTENT
+    // Edit the markdown string below to update the article.
+    // Use <div class="img-placeholder" data-label="..."></div>
+    // wherever you want an image slot — then swap data-src in
+    // the rendered placeholder to point to your image file.
+    // ────────────────────────────────────────────────────────
+    const ARTICLE_MD = `
+*This is the first in a three-part series examining AI's impact on product design, brand & marketing, and consumer play. [Link to our primer on Creative Conviction in the AI era here.](https://creativeconviction.github.io/creative-conviction/)*
+
+Two things are happening in software design simultaneously, and most people are only paying attention to one of them. The first is visible and widely covered, which is that agentic coding tools are absorbing the implementation work that used to require an engineer, compressing the distance between an idea and a working product. The second is that, as execution gets cheaper, the premium on taste, judgement, and point of view rises.
+
+Product design in software has always been a sequence of connected jobs: understanding which problem is worth solving, exploring options visually, getting to something testable fast, iterating, and making decisions with incomplete information. But this whole product development sequence is being reordered. As AI coding agents take on more of what used to require an engineer, the role of designers, design tooling, and where design work happens is being reshaped.
+
+We spent the last several months talking to design leaders at companies we admire and to the founders building the tools enabling this shift. What follows is what we found… that is, as of March 20th, 2025. Our honest caveat is that the rate at which this is changing makes any map feel provisional the moment we draw it. Regardless, here are our takes:
+
+- **[The best product teams are figuring out how to automate and enhance user feedback loops](#feedback-loops)**
+- **[Even if models can generate an infinite number of aesthetic products, knowing which direction to choose still requires taste](#taste)**
+- **[Taste can only scale if it's part of the founding DNA](#founding-dna)**
+- **[Interfaces are becoming increasingly dynamic, so understanding model behavior becomes an integral part of the designer's job](#model-behavior)**
+- **[While the visual layer between agents and designers is still developing, the canvas isn't going away](#canvas)**
+
+<a id="feedback-loops"></a>
+## The best product teams are figuring out how to automate and enhance user feedback loops
+
+The thinking that precedes the writing of code has always been one of the slowest working areas of software product teams. Understanding what users need, synthesizing a hundred conflicting signals into one clear direction, and deciding which problem is worth solving all takes time. But as product teams write less and less code, they're spending more time in the "what should we build?" faze. That said, teams are even working on automating parts of this now too...
+
+Take [Boris Cherny's team at Claude Code](https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens), for example. They built an agent that reads the user feedback Slack channel, surfaces recurring patterns, and generates PRDs for humans to review. We are also seeing specific tools aimed to tighten this product feedback loop. [Linear](https://linear.app/) lets teams convert their customer conversations into structured issues automatically and get routed without a PM acting as translator. [At Ramp](https://linear.app/customers/ramp), they have built internal workflows such that their R&D teams literally react with an emoji in Slack to create a Linear issue that then gets auto-routed to the right team. Diego Zaks, VP of Design, describes the ambition as eliminating any friction in the path from observation to tracked feedback - reducing the risk of product signals disappearing.
+
+Paul Bakaus, founder of [Impeccable](http://impeccable.style), thinks these feedback loops can get automated one step further. "It's easier to build something right away than to put it in an issue tracker...I don't have a backlog anymore." The issue tracker was potentially designed to manage handoffs between specialists, but when the specialists collapse into one person who can both decide and ship, then a tracking system might not even be necessary (at least for smaller teams…).
+
+In addition to automating the feedback loops from inbound customer feedback (e.g. tickets), there's also innovation happening around gathering more outbound market feedback. User research is also an area we're seeing new tooling. [Simile](http://simile.ai) and Aaru let users interrogate a synthetic population of thousands before speaking to a single real person, thus replacing statistically significant custom research surveys/ studies once performed by consultants. [Strella](https://www.strella.io/) and Listenlabs deploy an AI interviewer that recruits real participants, conduct the conversation, and return a synthesized qualitative research report ready to read the next morning, rather than waiting for weeks. [Inflight](https://www.inflight.co/) is specifically designed for streamlining product design feedback.
+
+Despite the ability to collect more feedback than ever before, product outputs are only as good as the priorities they run against. Agents do not know what matter to a company unless someone explicitly tells it all the context and keeps this up to date. The loop is powerful, but the thing that makes it point in the right direction is still up to teams who are defining what matters and why.
+
+<a id="taste"></a>
+## Even if models can generate an infinite number of aesthetic products, knowing which direction to choose still requires taste
+
+The working theory for many product teams is that models can generate and iterate, but models don't have stakes in the outcome. Models cannot want something to be beautiful in the same way a human does. A designer who has spent years caring about visual quality brings something to their work that expresses the accumulated frustration of seeing things done badly and the embarrassment of shipping something that wasn't right. That orientation toward quality doesn't 100% transfer through training data yet. While the generalized models are closing the aesthetic gap faster than expected, as they can learn the design principles and elements and predict what humans like, models trained on everything can recognize aesthetic patterns in aggregate. But as a result, their outputs regress to "the aesthetic average." A person with taste, however, has an opinion about the average. They know where to deviate slightly and how to make something unique.
+
+Gabriella Hachem at [Dessn](https://www.dessn.ai/), a tool that allows designers to prototype within their code base, observes this across her users: "The LLM can suggest and A/B test options, but it cannot say 'I'm betting the company on this.'" Ben South, founder of [Variant](https://variant.com/), a tool that generates an endless scroll of fully-formed, tasteful interactive designs, frames this as: "Design becomes more about curation and search - knowing what to put out there. It's not about execution. It's about how to direct the product and land it such that the zeitgeist will accept it." That act of selection, knowing not just what looks good, but what is right for this product at this moment, is where creative conviction lives.
+
+<a id="founding-dna"></a>
+## Taste can only scale if it's part of the founding DNA
+
+We believe that product judgment is an organizational property, not just a hiring decision to be bolted on later. Dylan Babbs, co-founder of [Profound](https://www.tryprofound.com/) and former design engineer, shared his perspective: "It would be very hard for a founder with a pure engineering background to just decide they're going to have a good design sense." Further, the best tastemakers want to work for people who truly care about it, so everything has to come from the founding team or someone very close to it. It's all about alignment of priorities.
+
+Oliver Harmin, co-founder and brand leader at [Quartr](https://quartr.com/), has made a commitment to quality a founding principle of the company. "If something's not done with quality, it's a future liability. It's a cultural thing, and it can't be solved with guidelines." As Quartr crossed a hundred people, Hamrin found that taste wouldn't scale through just hiring. "The previous ratio of tastemakers vs. the rest of the team won't be enough as we grow, because feedback and microdecisions that require taste grow exponentially with the team and customer base."
+
+So how does taste scale? Beyond having the presence of taste on the founding team, it also requires leaders who are extraordinarily gifted at storytelling. In addition to empathizing with the market and recognizing a huge business opportunity, they must communicate this clearly to their team and prospective hires on why it matters. Noam Lovinsky, CPO at Superhuman, elaborates on this point on [20Product](https://open.spotify.com/episode/6GA0zfHt4LW1iR5A5RhaGx?si=lOthyNXISvuS7X7chyx7QQ): "The best product leaders can get people to run at walls to bring the mission to life."
+
+<a id="model-behavior"></a>
+## Interfaces are becoming increasingly dynamic, so understanding model behavior becomes an integral part of the designer's job
+
+Product design in the software era assumed that interfaces were fixed artifacts, but now this assumption is breaking down. Designing for AI systems requires a different kind of literacy than designing for deterministic outputs. As [Oscar Dumlao](https://www.oscardumlao.com/), Head of Design at [Reve](https://www.reve.com/), put it in our conversation, designers now need "truth to materials," borrowing a principle from architecture. Builders are obligated to understand the nature and limits of the material they work with; the highest and best forms embrace those properties rather than fight them. Pre‑AI, software designers could largely ignore the "material" (or the code) and focus on arranging pixels and flows. With AI systems, however, the material is the model's behavior itself, how it reasons, plans, and fails, so being honest about what it can and cannot do becomes a core design skill.
+
+Jenny Wen, Design Lead at Anthropic, describes this change of building interfaces on [recent interview on Lenny's Podcast](https://www.lennysnewsletter.com/p/the-design-process-is-dead). She sees three types of interfaces living inside a single product: (1) durable static UIs that do not change between sessions, (2) a chat box that responds in real time, and (3) UIs generated on the fly by AI in response to what a user asks for in the moment. Anthropic's [Generative UI launch](https://x.com/claudeai/status/2032124273587077133), shipped this past week, shows what the third category looks like in practice. When a user asks for a chart, Claude generates the logic and rendering instructions for a custom widget tailored to that specific request. [Tambo](https://tambo.co/) is another tool helping to solve the real time generative interface problem for product engineers. Founder and CEO, Michael Magan, shared: "The future of software will be agentic interfaces."
+
+Of course, designing for custom, non-deterministic UI outputs requires knowing how models will behave. In addition to the new expectation that all designers should be living closer to the codebase, they are increasingly also expected to be strong prompt engineers and have a stronger understanding of how models behave. We're already seeing the title of the "model designer" emerge - someone who shapes how the model itself produces outputs, not just how users interact with them. [Barron Webster](https://www.aidesignfieldguide.com/articles/barron-webster), one of the first to hold the title at Figma, describes the risk of the alternative in an interview with AI Design Field Guide: "If you're designing UI for something that you haven't played with, the risk is that you're designing UI for a perfect case that isn't representative of how it will work."
+
+Another example of a designer wearing the "model designer" hat is Cedric Ith from BVP portfolio company [Perceptron](https://perceptron.inc/), a vision AI foundation model. Perceptron outputs mix together text, bounding boxes, polygons, and video timelines at large scale. A simple output might be a sentence. A complex output might be a hundred objects tracked across frames of a video. There is no Figma mock that adequately covers that range of states. As Cedric puts it: "You have to coordinate constantly with the modeling team on new capabilities, and then figure out how to show the model thinking - the visual equivalent of watching a reasoning model work through a problem." Further, one of the biggest barriers to AI adoption more broadly isn't that the models don't work; it's creating the right user experience for humans to understand what they should use it for and feel incentivized to provide enough context. [Nate Parrott](https://www.aidesignfieldguide.com/articles/nate-parrott) from Anthropic frames the broader implication: "Design becomes a matter of figuring out how to communicate your ideas to the model. In the same way you're thinking about what tools you're giving the user, you have to do the same thing for the model."
+
+<a id="canvas"></a>
+## While the visual layer between agents and designers is still developing, the canvas isn't going away
+
+There's nothing the design community likes debating more on X than the rhyme "Figma is dead" vs "Figma is ahead." Most designers we've spoken with say they still love having a visual workflow, especially for the design thinking process and high-fidelity refinement work. [Wen from Anthropic](https://www.youtube.com/watch?v=eh8bcBIAAFo) explains her reasoning: "Coding tools are super linear, where you iterate in one direction. But fine interaction details, micro directions for typography and styles… having those in a canvas to explore specifically is not something you always want to go directly to coding for." What changes most is where designers enter and exit the process. They are working both earlier, setting direction and defining constraints, and later, crafting the detailed visual refinement that prompts cannot do cleanly. In between, they are generating code-based prototypes using tools like [Lovable](https://lovable.dev/), [Cursor](https://cursor.com/), [Vercel](https://vercel.com/), or working directly inside code editors through [Claude Code](https://code.claude.com/docs/en/overview), [Codex](https://chatgpt.com/codex), and others.
+
+The biggest signal that the canvas is evolving rather than disappearing is shown by companies building new ones. Google recently launched its new beta for [Stitch](https://x.com/stitchbygoogle/status/2034332847893574080), an AI-native design canvas that holds and reasons across images, code, and text simultaneously, with parallel agents, voice-driven design direction, and a DESIGN.md file that enforces consistency across generated screens. [Replit's Agent 4](https://docs.replit.com/replitai/design-canvas) release takes a similar approach, letting users design on an infinite canvas, run parallel agents, and ship working apps from a single surface. Figma's [Code to Canvas](https://developers.figma.com/docs/figma-mcp-server/code-to-canvas/) feature takes AI-generated code and converts it back into editable designs. Various approaches show how the canvas is becoming the orchestration layer for agents rather than a static workspace for humans. Companies are also exploring using the canvas for their own home-grown AI product development systems. [Shopify](https://youtu.be/eMSqlQMk480), for example, has embedded [tldraw](http://tldraw.com), an open-source infinite canvas SDK, into its internal AI stack so that agents and humans can collaborate visually.
+
+We're continuing to see innovation and new tools emerge solving for the new workflow of where the visual and the generative meet. [Paper](http://paper.design), for example, is completely rebuilding design software to be AI native. Every design element renders as actual HTML, CSS, and Tailwind in real time, so the design and the code are the same thing from the first mark. Paper has also shipped an MCP server, meaning AI coding agents in Cursor or Claude Code can read and write to Paper files directly with no translation required. We are also seeing teams fill the "design language" coding gap with skills. [Impeccable](http://impeccable.style) is one example of a skills system that introduces a shared vocabulary - defining words like critique, polish, bolder, quieter, distill, animate - to direct coding agent output. Another tool, [Agentation](https://agentation.dev/), fills a remaining piece of the loop. Rather than starting from the design file or the coding agent, it starts from the living product. Users click any element on screen, add a note, and it passes structured context to the coding agent alongside their feedback.
+
+---
+
+<div class="img-placeholder" data-label="Market Map" data-src="market-map.png?v=2"></div>
+
+## What we're watching
+
+The designers thriving in this environment share a few things. They are comfortable with ambiguous outputs. They have enough prompt engineering fluency to work close to the codebase and models. They draw on wide references from materials, space, objects, and natural systems beyond just software, giving them something to reach for when familiar, average options fall short. And they have accountability, the willingness to say this is the direction and own what happens next.
+
+Creative conviction is held by people, and we believe that creative technologists have never been more valuable. If this is you, we'd love to meet you. And if you think differently about any of the things we've said, we'd especially love to meet you. ;)
+
+
+---
+
+*With special thanks to: Ben South (Variant), Tom Krcha (Pencil), Dylan Babbs (Profound), Oliver Hamrin (Quartr), Gabriella Hachem (Dessn), Paul Bakaus (Impeccable), Cedric Ith (Perceptron), Michael Magan (Tambo), Moe Amaya (Operate), and others who generously shared their thinking.*
+
+*Thank you also these product design leaders and communities we are fans of: [Dive Club](https://www.dive.club/) (Ridd), [First of Kind](https://firstofkind.com/) (Solieo), [Lenny's Podcast](https://www.lennysnewsletter.com/podcast) (Lenny), [Implications](https://www.implications.com/) (Scott Belsky), and others.*
+
+## Next up: Part II — Brand and Marketing
+`;
+
+    // ────────────────────────────────────────────────────────
+    // RENDER ARTICLE
+    // Parses markdown → HTML, then upgrades img-placeholder
+    // divs with accessible markup and data-src attributes.
+    // ────────────────────────────────────────────────────────
+    function renderArticle() {
+      const container = document.getElementById('article');
+
+      // Parse markdown
+      const html = marked.parse(ARTICLE_MD);
+
+      // Inject into a temp node so we can traverse the DOM
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+
+      // No first-heading override needed — article opens with paragraphs
+      // so the first h2 naturally gets its top border and spacing.
+
+      // Upgrade img-placeholder divs
+      temp.querySelectorAll('.img-placeholder').forEach(el => {
+        const label = el.getAttribute('data-label') || 'image';
+        const src = el.getAttribute('data-src') || '';
+        const hasImage = src !== '';
+        el.innerHTML = hasImage
+          ? `<img src="${src}" alt="${label}" style="width:100%;height:auto;display:block;">`
+          : `
+            <!-- SWAP: ${label} -->
+            <img data-src="" src="" alt="${label}">
+            <!-- SWAP END -->
+            <span class="img-placeholder-icon">□</span>
+            <span class="img-placeholder-label">${label}</span>
+          `;
+      });
+
+      // Move all children into the real container and tag for reveal
+      Array.from(temp.children).forEach(el => {
+        if (!el.classList.contains('reveal')) {
+          el.classList.add('reveal');
+        }
+        container.appendChild(el);
+      });
+    }
+
+    // ────────────────────────────────────────────────────────
+    // SCROLL REVEAL — IntersectionObserver
+    // Elements enter at opacity 0 / translateY(26px) and
+    // transition to visible as they scroll into the viewport.
+    // Elements that enter together are staggered by 80ms each.
+    // ────────────────────────────────────────────────────────
+    function initReveal() {
+      const observer = new IntersectionObserver((entries) => {
+        // Collect elements entering this tick
+        const entering = entries.filter(e => e.isIntersecting);
+
+        entering.forEach((entry, i) => {
+          const el = entry.target;
+          // Stagger elements that appear in the same observation batch
+          el.style.transitionDelay = `${i * 80}ms`;
+          el.classList.add('visible');
+          // Reset delay after transition so re-entry (if any) feels clean
+          el.addEventListener('transitionend', () => {
+            el.style.transitionDelay = '0ms';
+          }, { once: true });
+          observer.unobserve(el);
+        });
+      }, {
+        threshold: 0.07,
+        rootMargin: '0px 0px -36px 0px'
+      });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }
+
+    // ────────────────────────────────────────────────────────
+    // INIT
+    // ────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      renderArticle();
+      initReveal();
+    });
+  </script>
+  <script>
+    const SimplexNoise = function() {
+      const F3 = 1.0/3.0, G3 = 1.0/6.0;
+      const p = new Uint8Array(256);
+      for (let i = 0; i < 256; i++) p[i] = Math.floor(Math.random() * 256);
+      const perm = new Uint8Array(512), permMod12 = new Uint8Array(512);
+      for (let i = 0; i < 512; i++) { perm[i] = p[i&255]; permMod12[i] = perm[i] % 12; }
+      const grad3 = new Float32Array([1,1,0,-1,1,0,1,-1,0,-1,-1,0,1,0,1,-1,0,1,1,0,-1,-1,0,-1,0,1,1,0,-1,1,0,1,-1,0,-1,-1]);
+      return { noise3D: function(x,y,z) {
+        let n0,n1,n2,n3;
+        const s=(x+y+z)*F3, i=Math.floor(x+s), j=Math.floor(y+s), k=Math.floor(z+s);
+        const t=(i+j+k)*G3, X0=i-t, Y0=j-t, Z0=k-t;
+        const x0=x-X0, y0=y-Y0, z0=z-Z0;
+        let i1,j1,k1,i2,j2,k2;
+        if(x0>=y0){if(y0>=z0){i1=1;j1=0;k1=0;i2=1;j2=1;k2=0;}else if(x0>=z0){i1=1;j1=0;k1=0;i2=1;j2=0;k2=1;}else{i1=0;j1=0;k1=1;i2=1;j2=0;k2=1;}}
+        else{if(y0<z0){i1=0;j1=0;k1=1;i2=0;j2=1;k2=1;}else if(x0<z0){i1=0;j1=1;k1=0;i2=0;j2=1;k2=1;}else{i1=0;j1=1;k1=0;i2=1;j2=1;k2=0;}}
+        const x1=x0-i1+G3,y1=y0-j1+G3,z1=z0-k1+G3;
+        const x2=x0-i2+2*G3,y2=y0-j2+2*G3,z2=z0-k2+2*G3;
+        const x3=x0-1+3*G3,y3=y0-1+3*G3,z3=z0-1+3*G3;
+        const ii=i&255,jj=j&255,kk=k&255;
+        function contrib(x,y,z,gi){let t=0.6-x*x-y*y-z*z;if(t<0)return 0;t*=t;return t*t*(grad3[gi]*x+grad3[gi+1]*y+grad3[gi+2]*z);}
+        n0=contrib(x0,y0,z0,permMod12[ii+perm[jj+perm[kk]]]*3);
+        n1=contrib(x1,y1,z1,permMod12[ii+i1+perm[jj+j1+perm[kk+k1]]]*3);
+        n2=contrib(x2,y2,z2,permMod12[ii+i2+perm[jj+j2+perm[kk+k2]]]*3);
+        n3=contrib(x3,y3,z3,permMod12[ii+1+perm[jj+1+perm[kk+1]]]*3);
+        return 32*(n0+n1+n2+n3);
+      }};
+    };
+
+    window.addEventListener('load', function() {
+      const canvas = document.getElementById('hero-water-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const simplex = SimplexNoise();
+      const fontSize = 10;
+      const gridStepX = fontSize * 0.65;
+      const gridStepY = fontSize * 0.9;
+      const params = { scale: 0.0015, speed: 0.0004, strata: 12.0, turbulence: 1.24 };
+      const palette = ['#74aec7', '#4282b8', '#1b4e85'];
+      const bg = '#d1cbc1';
+      const sourceCode = `creative conviction part i product design agentic coding tools are absorbing the implementation work compressing the distance between an idea and a working product as execution gets cheaper the premium on taste judgement and point of view starts to rise`;
+      let w, h, time = 0;
+
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        w = canvas.width  = rect.width  || 600;
+        h = canvas.height = rect.height || 800;
+        ctx.font = `600 ${fontSize}px "JetBrains Mono"`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const isMobile = window.innerWidth < 768;
+      const interval = isMobile ? 1000/30 : 0;
+      let lastFrame = 0, charIndex = 0;
+
+      function render(now) {
+        if (now - lastFrame >= interval) {
+          lastFrame = now;
+          ctx.fillStyle = bg;
+          ctx.fillRect(0, 0, w, h);
+          ctx.font = `600 ${fontSize}px "JetBrains Mono"`;
+          for (let y = 0; y < h; y += gridStepY) {
+            for (let x = 0; x < w; x += gridStepX) {
+              const nx = x * params.scale, ny = y * params.scale;
+              const warpX = simplex.noise3D(nx, ny, time * 0.5) * params.turbulence;
+              const warpY = simplex.noise3D(nx+100, ny+100, time * 0.5) * params.turbulence;
+              let n = simplex.noise3D(nx+warpX, ny+warpY, time);
+              n = (n + 1) / 2;
+              const contour = Math.sin(n * Math.PI * params.strata);
+              if (contour > 0.4) {
+                let colorIdx = Math.max(0, Math.min(palette.length-1, Math.floor(n * palette.length)));
+                ctx.globalAlpha = (contour - 0.4) / 0.6;
+                ctx.fillStyle = palette[colorIdx];
+                let char = ' ';
+                while (char === ' ' || char === '\n') { char = sourceCode[charIndex % sourceCode.length]; charIndex++; }
+                ctx.fillText(char, x, y);
+              }
+            }
+          }
+          ctx.globalAlpha = 1;
+          time += params.speed;
+        }
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    });
+  </script>
+</body>
+</html>
