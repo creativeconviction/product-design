@@ -29,7 +29,7 @@
 
     body {
       font-family: var(--font);
-      background-color: #D0E9F5;
+      background-color: #F0EEE8;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.68' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.3'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
       color: var(--text);
       overflow-x: hidden;
@@ -260,6 +260,7 @@
     .article strong { font-weight: 600; color: var(--black); }
     .article em     { font-style: italic; }
     .article a      { color: var(--text); }
+    .article li a   { text-decoration: none; }
 
     /* ── Image placeholders ── */
     .img-placeholder {
@@ -465,6 +466,13 @@ Product design in software has always been a sequence of connected jobs: underst
 
 We spent the last several months talking to design leaders at companies we admire and to the founders building the tools enabling this shift. What follows is what we found... as of March 20th, 2025. Our honest caveat is that the rate at which this is changing makes any map feel provisional the moment you draw it. Regardless, here is what we learned.
 
+- **[The best product teams are figuring out how to automate and enhance user feedback loops](#feedback-loops)**
+- **[Even if models can generate an infinite number of aesthetic products, knowing which direction to choose still requires taste](#taste)**
+- **[Taste can only scale if it's part of the founding DNA](#founding-dna)**
+- **[Interfaces are becoming increasingly dynamic, so understanding model behavior becomes an integral part of the designer's job](#model-behavior)**
+- **[While the visual layer between agents and designers is still developing, the canvas isn't going away](#canvas)**
+
+<a id="feedback-loops"></a>
 ## The best product teams are figuring out how to automate and enhance user feedback loops
 
 The thinking that precedes the writing of code has always been one of the slowest working areas of software product teams — understanding what users need, synthesizing a hundred conflicting signals into one clear direction, and deciding which problem is worth solving at all. But as product teams write less and less code, they're spending more time in this "what *should* we build?" piece of the equation. That said, teams are even working on automating parts of this now, too.
@@ -477,12 +485,14 @@ In addition to automating the feedback loops from *inbound* customer feedback, t
 
 Despite the ability to collect more feedback than ever before, product outputs are only as good as the priorities they run against. Agents do not know what matters to your company unless someone has explicitly told them all the context and keeps it up to date. The loop is powerful, but the thing that makes it point in the right direction is still up to teams who are defining what matters and why.
 
+<a id="taste"></a>
 ## Even if models can generate an infinite number of aesthetic products, knowing which direction to choose still requires taste
 
 The working theory for many product teams is that models can generate and iterate, but models don't have stakes in the outcome and cannot *want* something to be beautiful in the same way a human does. A designer who has spent years caring about visual quality brings something to their work that expresses the accumulated frustration of seeing things done badly, the standards internalized from seeing things done well, and the embarrassment of shipping something that wasn't right. While the generalized models are closing the aesthetic gap faster than expected, models trained on everything can recognize aesthetic patterns in aggregate — but their outputs regress to "the aesthetic average." A person with taste, however, has an opinion about the average. They know where to deviate slightly and how to make something unique.
 
 Gabriella Hachem at [Dessn](https://www.dessn.ai/), a tool that allows designers to prototype within their codebase, observes this across her users: "The LLM can suggest and A/B test options, but it cannot say 'I'm betting the company on this.'" Ben South, founder of [Variant](https://variant.com/), a tool that generates an endless scroll of fully-formed UI designs, frames this as: "Design becomes more about curation and search — knowing what to put out there. It's not about execution. It's about how to direct the product and land it such that the zeitgeist will accept it." That act of selection — knowing not just what looks good but what is *right* for this product at this moment — is where creative conviction lives.
 
+<a id="founding-dna"></a>
 ## Taste can only scale if it's part of the founding DNA
 
 We believe that product judgment is an organizational property, not just a hiring decision you bolt on later. Dylan Babbs, co-founder of [Profound](https://www.tryprofound.com/) and former design engineer, puts it simply: "It would be very hard for a founder with a pure engineering background to just decide they're going to have a good design sense." Further, the best tastemakers want to work for people who truly care about it, so everything has to come from the founding team or someone very close to it.
@@ -491,6 +501,7 @@ Oliver Hamrin, co-founder and brand leader of [Quartr](https://quartr.com/), has
 
 So how does taste scale? Beyond having the presence of taste on the founding team, it also requires leaders who are extraordinarily gifted at storytelling. Noam Lovinsky, CPO at Superhuman, elaborates on this point on [20Product](https://open.spotify.com/episode/6GA0zfHt4LW1iR5A5RhaGx?si=lOthyNXISvuS7X7chyx7QQ): "The best product leaders can get people to run at walls to bring the mission to life."
 
+<a id="model-behavior"></a>
 ## Interfaces are becoming increasingly dynamic, so understanding model behavior becomes an integral part of the designer's job
 
 The design practice in the software era assumed that interfaces were fixed artifacts, but now this assumption is breaking down. As [Oscar Dumlao](https://www.oscardumlao.com/), Head of Design at [Reve](https://www.reve.com/), put it in our conversation, designers now need "truth to materials," borrowing a principle from architecture. Builders are obligated to understand the nature and limits of the material they work with; with AI systems, the material is the model's behavior itself — how it reasons, plans, and fails — so being honest about what it can and cannot do becomes a core design skill, not an implementation detail.
@@ -501,6 +512,7 @@ We're already seeing the title of the "model designer" emerge — someone who sh
 
 Cedric Ith from BVP portfolio company [Perceptron](https://perceptron.inc/) puts it this way: "You have to coordinate constantly with the modeling team on new capabilities, and then figure out how to show the model thinking — the visual equivalent of watching a reasoning model work through a problem."
 
+<a id="canvas"></a>
 ## While the visual layer between agents and designers is still developing, the canvas isn't going away
 
 Most designers we speak to say they still love having a visual workflow, especially for the design thinking process and high-fidelity refinement. [Wen from Anthropic](https://www.youtube.com/watch?v=eh8bcBIAAFo) explains: "Coding tools are super linear, where you iterate in one direction. But fine interaction details, micro directions for typography and styles — having those in a canvas to explore is not something you always want to go directly to coding for." What has changed is where designers enter and exit the process. They are working earlier — setting direction and defining constraints — and later, doing the detailed visual refinement that prompts cannot do cleanly. In between, they are generating code-based prototypes using tools like [Lovable](https://lovable.dev/), [Cursor](https://cursor.com/), [Vercel](https://vercel.com/), or working directly inside code editors.
@@ -619,9 +631,19 @@ The designers thriving in this environment share a few things. They are comforta
       const canvas = document.getElementById('hero-water-canvas');
       if (!canvas) { requestAnimationFrame(initWater); return; }
 
+      const isMobile = window.innerWidth < 768;
+
+      // On very small screens skip the animation entirely
+      if (window.innerWidth < 480) {
+        canvas.style.background = '#909090';
+        return;
+      }
+
       const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width  = rect.width  || 600;
-      canvas.height = rect.height || 800;
+      // Render at half resolution on mobile — 4x fewer pixels to compute
+      const scale = isMobile ? 0.5 : 1;
+      canvas.width  = (rect.width  || 600) * scale;
+      canvas.height = (rect.height || 800) * scale;
 
       const gl = canvas.getContext('webgl2');
       if (!gl) { console.error('WebGL2 not supported'); return; }
@@ -677,15 +699,20 @@ The designers thriving in this environment share a few things. They are comforta
       };
       img.src = 'https://workers.paper.design/file-assets/01K5RX31JFY1P17VEB5RYSNH1K/01KM4HVH6WBB278909AZFXX1VX.png';
 
-      // Animate
+      // Animate — throttle to 30fps on mobile
       const uTime = U('u_time');
       const t0 = performance.now();
-      (function render() {
-        gl.uniform1f(uTime, (performance.now() - t0) * 0.0003);
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      const interval = isMobile ? 1000 / 30 : 0;
+      let lastFrame = 0;
+      (function render(ts) {
+        if (ts - lastFrame >= interval) {
+          lastFrame = ts;
+          gl.uniform1f(uTime, (performance.now() - t0) * 0.0003);
+          gl.viewport(0, 0, canvas.width, canvas.height);
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        }
         requestAnimationFrame(render);
-      })();
+      })(0);
 
       console.log('Water shader running');
     }
